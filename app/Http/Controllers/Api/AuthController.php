@@ -8,7 +8,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
- /**
+    /**
      * Create a new AuthController instance.
      *
      * @return void
@@ -26,7 +26,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => ['required','email'],
+            'email' => ['required', 'email'],
             'password' => ['required']
         ]);
         $credentials = request(['email', 'password']);
@@ -35,6 +35,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
+        // return "auth login";
         return $this->respondWithToken($token);
     }
 

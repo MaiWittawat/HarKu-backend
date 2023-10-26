@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\MessageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,9 +21,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/test', [RegisterController::class, 'test']);
-Route::post('/register', [RegisterController::class, 'registeration']);
+Route::get('/test', [UserController::class, 'test']);
+Route::post('/register', [UserController::class, 'registeration']);
+Route::post('/getAllUser', [UserController::class, 'getAllUser']);
+Route::post('/getUser', [UserController::class, 'getUser']);
 
+
+Route::post('/message', [MessageController::class, 'storeMessage']);
+Route::post('/chat', [MessageController::class, 'getMessage']);
+Route::get('/lastMessageIndex', [MessageController::class, 'lastMessageIndex']);
 
 Route::group([
 
