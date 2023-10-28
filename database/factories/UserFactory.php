@@ -23,11 +23,11 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
-            'birthday' => '01-01-2500',
-            'gender' => ['man', 'woman', 'other'][array_rand(['man', 'woman', 'other'])],
-            'show_gender' => ['man', 'woman', 'all'][array_rand(['man', 'woman', 'all'])],
-            'goals' => ['Marriage', 'A serious relationship', 'Something casual', 'Prefer not ot say', 'Not sure yet']
-                          [array_rand(['Marriage', 'A serious relationship', 'Something casual', 'Prefer not ot say', 'Not sure yet'])]
+            // 'birthday' => '01-01-2500',
+            // 'gender' => ['man', 'woman', 'other'][array_rand(['man', 'woman', 'other'])],
+            // 'show_gender' => ['man', 'woman', 'all'][array_rand(['man', 'woman', 'all'])],
+            // 'goals' => ['Marriage', 'A serious relationship', 'Something casual', 'Prefer not ot say', 'Not sure yet']
+            //               [array_rand(['Marriage', 'A serious relationship', 'Something casual', 'Prefer not ot say', 'Not sure yet'])]
 
         ];
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\UserInfo;
 
 class UserController extends Controller
 {
@@ -40,18 +41,50 @@ class UserController extends Controller
             return "hasfile";
         }
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = $request->password;
-        $user->gender = $request->gender;
-        $user->show_gender = $request->show_gender;
-        $user->birthday = $request->birthday;
+        // $user = new User();
+        // $user->name = $request->name;
+        // $user->email = $request->email;
+        // $user->password = $request->password;
 
-        $user->save();
+        // $userInfo = new UserInfo();
+        // $userInfo->birthday = $request->birthday;
+        // $userInfo->age = $request->age;
+        // $userInfo->height = $request->height;
+        // $userInfo->gender = $request->gender;
+        // $userInfo->show_gender = $request->show_gender;
+        // $userInfo->relation = $request->relation;
+        // $userInfo->education = $request->education;
+        // $userInfo->smoking = $request->smoking;
+        // $userInfo->drinking = $request->drinking;
+        // $userInfo->about_me = $request->about_me;
+        // $userInfo->first_date_idea = $request->first_date_idea;
+
+        // $user->info()->save($userInfo);
+
+        // การใช้ create จะสร้างและบันทึกลงในฐานข้อมูล
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password,
+        ]);
+
+        $userInfo = UserInfo::create([
+            'user_id' => $user->id,
+            'birthday' => $request->birthday,
+            'age' => $request->age,
+            'height' => $request->height,
+            'gender' => $request->gender,
+            'show_gender' => $request->show_gender,
+            'relation' => $request->relation,
+            'education' => $request->education,
+            'smoking' => $request->smoking,
+            'drinking' => $request->drinking,
+            'about_me' => $request->about_me,
+            'first_date_idea' => $request->first_date_idea,
+        ]);
+
 
         return response()->json($user);
-        // return $user;
     }
 
     public function getAllUser(Request $request)
@@ -67,16 +100,35 @@ class UserController extends Controller
         return response()->json($users);
     }
 
-    public function getUser(Request $request){
+    public function getUser(Request $request)
+    {
 
         $request->validate([
             'email' => ['required', 'email']
         ]);
 
-        $userEmailToExclude = $request->email;
+        $userEmail = $request->email;
 
-        $user = User::where('email',$userEmailToExclude)->first();
+        $user = User::where('email', $userEmail)->first();
 
         return response()->json($user);
+    }
+
+
+    public function getUserForMatch($email)
+    {
+        if($email == null || $email == ""){
+            abort(400, "Email is emtry.");
+        }
+
+        $existEmail = User::where('email', $email)->first();
+
+        if ($existEmail == NULL) {
+            abort(400, "Email is valid");
+        }
+
+        $userData = User::with('info')->where('email', '!=', $email)->get();
+
+        return response()->json($userData);
     }
 }
