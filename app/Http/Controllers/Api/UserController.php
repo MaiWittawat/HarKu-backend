@@ -18,20 +18,17 @@ class UserController extends Controller
 
     public function registeration(Request $request)
     {
-
-        dd($request->all());
-
         $request->validate([
             'name' => ['required', 'string'],
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
-            'gender' => ['required', 'string'], 
+            'gender' => ['required', 'string'],
             'show_gender' => ['required', 'string'],
             'birthday' => ['required', 'string'],
             'max_age' => ['required', 'integer'],
             'min_age' => ['required', 'integer'],
             'distance' => ['required', 'integer'],
-            'aboutme' => ['required', 'string'],
+            'about_me' => ['required', 'string'],
             'drinking' => ['required', 'string'],
             'education'=> ['required', 'string'],
             'height' => ['required', 'integer'],
@@ -54,52 +51,38 @@ class UserController extends Controller
             return "hasfile";
         }
 
-        // $user = new User();
-        // $user->name = $request->name;
-        // $user->email = $request->email;
-        // $user->password = $request->password;
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = $request->password;
 
-        // $userInfo = new UserInfo();
-        // $userInfo->birthday = $request->birthday;
-        // $userInfo->age = $request->age;
-        // $userInfo->height = $request->height;
-        // $userInfo->gender = $request->gender;
-        // $userInfo->show_gender = $request->show_gender;
-        // $userInfo->relation = $request->relation;
-        // $userInfo->education = $request->education;
-        // $userInfo->smoking = $request->smoking;
-        // $userInfo->drinking = $request->drinking;
-        // $userInfo->about_me = $request->about_me;
-        // $userInfo->first_date_idea = $request->first_date_idea;
+        $user->save();
 
-        // $user->info()->save($userInfo);
+        $userInfo = new UserInfo();
+        $userInfo->user_id = $user->id;
+        $userInfo->birthday = $request->birthday;
+        $userInfo->height = $request->height;
 
-        // การใช้ create จะสร้างและบันทึกลงในฐานข้อมูล
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password,
-        ]);
+        $userInfo->gender = $request->gender;
 
-        $userInfo = UserInfo::create([
-            'user_id' => $user->id,
-            'birthday' => $request->birthday,
-            'height' => $request->height,
-            'gender' => $request->gender,
-            'prefer_max_age' => $request->max_age,
-            'prefer_min_age' => $request->min_age,
-            'show_gender' => $request->show_gender,
-            'relation' => $request->relation,
-            'education' => $request->education,
-            'smoking' => $request->smoking,
-            'drinking' => $request->drinking,
-            'about_me' => $request->about_me,
-            'longitude' => $request->longitude,
-            'latitude' => $request->latitude,
-        ]);
+        $userInfo->prefer_min_age = $request->min_age;
+        $userInfo->prefer_max_age = $request->max_age;
 
+        $userInfo->show_gender = $request->show_gender;
 
-        return response()->json($user);
+        $userInfo->relation = $request->relation;
+        $userInfo->education = $request->education;
+        $userInfo->smoking = $request->smoking;
+        $userInfo->drinking = $request->drinking;
+
+        $userInfo->about_me = $request->about_me;
+
+        $userInfo->longitude = $request->longitude;
+        $userInfo->latitude = $request->latitude;
+
+        $user->info()->save($userInfo);
+
+        return response("crate user success");
     }
 
     public function getAllUser(Request $request)
@@ -143,13 +126,13 @@ class UserController extends Controller
         }
 
         $me = User::with('info')->get()->where("email", $email);
-        
+
         $userData = User::with('info')->where('email', '!=', $email)->get();
         // $userData = User::with('info')
         //                 ->where('email', '!=', $email)
         //                 ->where("")
         //                 ->get();
-        
+
 
         return response()->json($userData);
     }
