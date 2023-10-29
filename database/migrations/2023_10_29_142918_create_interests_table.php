@@ -3,8 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Passion;
-use App\Models\UserInfo;
 
 return new class extends Migration
 {
@@ -13,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('passion_user_info', function (Blueprint $table) {
+        Schema::create('interests', function (Blueprint $table) {
             $table->id();
+            $table->string("name");
             $table->timestamps();
-            $table->foreignIdFor(Passion::class);
-            $table->foreignIdFor(UserInfo::class);
         });
     }
 
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_infos');
+        Schema::dropIfExists('interests');
     }
 };

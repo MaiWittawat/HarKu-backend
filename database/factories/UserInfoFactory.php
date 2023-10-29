@@ -33,6 +33,9 @@ class UserInfoFactory extends Factory
             'smoking' => ['smoking', 'Non-smoking'][array_rand(['Smoker', 'Non-smoker'])],
             'drinking' => ['Sober curious', 'Socially', 'Nerver drink'][array_rand(['Sober curious', 'Socially', 'Nerver drink'])],
             'about_me' => fake()->name(),
+            'latitude' => rand(10,15),
+            'longitude' => rand(96, 105),
+            'distance' => rand(1, 20)
         ];
     }
 }

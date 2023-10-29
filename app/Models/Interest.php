@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\UserInfo;
 
-class Passion extends Model
+class Interest extends Model
 {
     use HasFactory;
 

@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Passion;
+use App\Models\Interest;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class PassionSeeder extends Seeder
+class InterestSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -51,7 +51,7 @@ class PassionSeeder extends Seeder
         );
 
         foreach($list as $item) {
-            $passion = new Passion();
+            $passion = new Interest();
             $passion->name = $item;
             $passion->save();
         }

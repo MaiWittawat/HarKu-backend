@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('about_me');
             $table->decimal('longitude', 10, 7)->default(0);
             $table->decimal('latitude', 10, 7)->default(0);
+            $table->integer('distance')->default(5);
             $table->timestamps();
         });
     }
