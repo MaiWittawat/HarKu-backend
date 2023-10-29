@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserInfo;
+use App\Models\Passion;
+
 
 class UserController extends Controller
 {
@@ -22,10 +24,21 @@ class UserController extends Controller
         $request->validate([
             'name' => ['required', 'string'],
             'email' => ['required', 'email'],
-            'password' => ['required'],
-            'gender' => ['required', 'string'],
+            'password' => ['required', 'string'],
+            'gender' => ['required', 'string'], 
             'show_gender' => ['required', 'string'],
-            'birthday' => ['required'],
+            'birthday' => ['required', 'string'],
+            'max_age' => ['required', 'integer'],
+            'min_age' => ['required', 'integer'],
+            'distance' => ['required', 'integer'],
+            'aboutme' => ['required', 'string'],
+            'drinking' => ['required', 'string'],
+            'education'=> ['required', 'string'],
+            'height' => ['required', 'integer'],
+            'relation' => ['required', 'string'],
+            'smoking' => ['required', 'string'],
+            'longitude' => ['required', 'numeric'],
+            'latitude' => ['required', 'numeric'],
         ]);
 
         $email = $request->get('email');
@@ -71,16 +84,18 @@ class UserController extends Controller
         $userInfo = UserInfo::create([
             'user_id' => $user->id,
             'birthday' => $request->birthday,
-            'age' => $request->age,
             'height' => $request->height,
             'gender' => $request->gender,
+            'prefer_max_age' => $request->max_age,
+            'prefer_min_age' => $request->min_age,
             'show_gender' => $request->show_gender,
             'relation' => $request->relation,
             'education' => $request->education,
             'smoking' => $request->smoking,
             'drinking' => $request->drinking,
             'about_me' => $request->about_me,
-            'first_date_idea' => $request->first_date_idea,
+            'longitude' => $request->longitude,
+            'latitude' => $request->latitude,
         ]);
 
 
@@ -118,7 +133,7 @@ class UserController extends Controller
     public function getUserForMatch($email)
     {
         if($email == null || $email == ""){
-            abort(400, "Email is emtry.");
+            abort(400, "Email is empty.");
         }
 
         $existEmail = User::where('email', $email)->first();
@@ -127,8 +142,19 @@ class UserController extends Controller
             abort(400, "Email is valid");
         }
 
+        $me = User::with('info')->get()->where("email", $email);
+        
         $userData = User::with('info')->where('email', '!=', $email)->get();
+        // $userData = User::with('info')
+        //                 ->where('email', '!=', $email)
+        //                 ->where("")
+        //                 ->get();
+        
 
         return response()->json($userData);
+    }
+
+    public function getPassions() {
+        return Passion::get();
     }
 }

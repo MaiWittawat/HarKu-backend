@@ -16,16 +16,18 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class);
             $table->string('birthday');
-            $table->integer('age')->default(0);
             $table->integer('height')->default(0);
             $table->string('gender');
+            $table->integer('prefer_max_age')->default(100);
+            $table->integer('prefer_min_age')->default(0);
             $table->string('show_gender');
             $table->string('relation');
             $table->string('education');
             $table->string('smoking');
             $table->string('drinking');
             $table->string('about_me');
-            $table->string('first_date_idea');
+            $table->decimal('longitude', 10, 7)->default(0);
+            $table->decimal('latitude', 10, 7)->default(0);
             $table->timestamps();
         });
     }

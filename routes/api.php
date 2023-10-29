@@ -26,6 +26,7 @@ Route::post('/register', [UserController::class, 'registeration']);
 Route::post('/getAllUser', [UserController::class, 'getAllUser']);
 Route::post('/getUser', [UserController::class, 'getUser']);
 Route::get('/getUserForMatch/{email}', [UserController::class, 'getUserForMatch']);
+Route::get('/getPassions', [UserController::class, 'getPassions']);
 
 
 Route::post('/message', [MessageController::class, 'storeMessage']);
