@@ -22,8 +22,8 @@ class UserInfoFactory extends Factory
         return [
             'user_id' => $this->nextUserId++, // สุ่ม user_id จากรายการ ID ของผู้ใช้
             'birthday' => '2001-5-2',
-            'prefer_max_age' => rand(18,30),
-            'prefer_min_age' => rand(31,100),
+            'prefer_min_age' => rand(18,30),
+            'prefer_max_age' => rand(31,100),
             'height' => rand(150,250),
             'gender' => ['man', 'woman', 'other'][array_rand(['man', 'woman', 'other'])],
             'show_gender' => ['man', 'woman', 'all'][array_rand(['man', 'woman', 'all'])],
