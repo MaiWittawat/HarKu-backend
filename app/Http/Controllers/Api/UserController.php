@@ -180,4 +180,11 @@ class UserController extends Controller
         }
 
     }
+
+    /*
+        add match : $user1->matchesTo()->attach($user2);
+        update match status : $user1->matchesTo()->updateExistingPivot($user2, ['isMatch' => true])
+        
+
+    */
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -20,6 +21,14 @@ class User extends Authenticatable implements JWTSubject
     public function info()
     {
         return $this->hasOne(UserInfo::class);
+    }
+
+    public function matchesTo() {
+        return $this->BelongsToMany(User::class, 'user_user', 'match_by', 'match_to');
+    }
+
+    public function matchesBy() : BelongsToMany {
+        return $this->BelongsToMany(User::class, 'user_user', 'match_to', 'match_by');
     }
 
     /**
