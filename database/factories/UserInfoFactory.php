@@ -30,8 +30,8 @@ class UserInfoFactory extends Factory
             'relation' => ['Marriage', 'A serious relationship', 'Something casual', 'Prefer not ot say', 'Not sure yet']
                           [array_rand(['Marriage', 'A serious relationship', 'Something casual', 'Prefer not ot say', 'Not sure yet'])],
             'education' => fake()->name(),
-            'smoking' => ['smoking', 'Non-smoking'][array_rand(['Smoker', 'Non-smoker'])],
-            'drinking' => ['Sober curious', 'Socially', 'Nerver drink'][array_rand(['Sober curious', 'Socially', 'Nerver drink'])],
+            'smoking' => ['Smoker', 'Non-smoker'][array_rand(['Smoker', 'Non-smoker'])],
+            'drinking' => ['Sober curious', 'Socially', 'Never drink'][array_rand(['Sober curious', 'Socially', 'Never drink'])],
             'about_me' => fake()->name(),
             'latitude' => rand(10,15),
             'longitude' => rand(96, 105),

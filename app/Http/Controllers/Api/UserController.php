@@ -121,19 +121,6 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    public function getUserInfo($email){
-
-        if($email == null || $email == ""){
-            abort(400, "Email is empty.");
-        }
-
-
-        $me = User::with('info')->where('email', $email)->first();
-        $me = $me->info()->first();
-
-        return response($me);
-    }
-
 
     public function getUserForMatch($email)
     {
