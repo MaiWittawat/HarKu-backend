@@ -212,7 +212,6 @@ class UserController extends Controller
 
     }
 
-
     public function like(Request $request) {
         $request->validate([
             'email' => ['required', 'email'],
@@ -243,5 +242,22 @@ class UserController extends Controller
             $me->matchesTo()->attach($user);
             return response('You have matched');
         }
+    }
+
+    public function isMatch(Request $request) {
+        $request->validate([            
+            'sender_id' => ['required', 'integer'],
+            'receiver_id' => ['required', 'integer']
+        ]);
+
+        $user = User::with(['matchesBy', 'matchesTo'])->find($request->sender_id);
+        if($user->matchesTo->contains('id', $request->receiver_id)) {
+            return response()->json(['matchesTo' => $request->receiver_id, 'matchesBy' => $request->sender_id]);
+        } elseif($user->matchesBy->contains('id', $request->receiver_id)) {
+            return response()->json(['matchesTo' => $request->sender_id, 'matchesBy' =>$request->receiver_id]);
+        } else {
+            abort(400, "Is not matched yet!");
+        }
+
     }
 }

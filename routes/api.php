@@ -28,9 +28,12 @@ Route::post('/getUser', [UserController::class, 'getUser']);
 Route::get('/getUserForMatch/{email}', [UserController::class, 'getUserForMatch']);
 Route::get('/getInterests', [UserController::class, 'getInterests']);
 Route::post('/changePassword', [UserController::class, 'changePassword']);
-
 Route::post('/editProfile', [UserController::class, 'editProfile']);
 Route::post('/like', [UserController::class, 'like']);
+Route::post('isMatch', [UserController::class, 'isMatch']);
+Route::post('/myMatch', [UserController::class, 'myMatch']);
+Route::post('/myLike', [UserController::class, 'myLike']);
+Route::post('/likeMe', [UserController::class, 'likeMe']);
 
 Route::post('/message', [MessageController::class, 'storeMessage']);
 Route::post('/chat', [MessageController::class, 'getMessage']);
