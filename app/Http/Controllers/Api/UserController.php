@@ -141,6 +141,9 @@ class UserController extends Controller
                         ->whereDoesntHave('matchesBy', function ($query) use ($me) {
                             $query->where('user_user.match_by', $me->id);
                         })
+                        ->whereDoesntHave('matchesTo', function ($query) use ($me) {
+                            $query->where('user_user.isMatch', 1);
+                        })
                         ->get(); 
 
         $list = array();
