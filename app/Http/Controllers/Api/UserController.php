@@ -135,21 +135,23 @@ class UserController extends Controller
         }
 
         $me = User::with('info')->where('email', '=', $email)->first();
-        $me = $me->info()->first();
 
-        $userData = User::with('info.interests')
-                        ->where('email', '!=', $email)
-                        ->whereDoesntHave('matchesTo')
-                        ->inRandomOrder()
-                        ->get();
+        $userData = User::with('info.interests') 
+                        ->where('email', '!=', $email) 
+                        ->whereDoesntHave('matchesBy', function ($query) use ($me) {
+                            $query->where('user_user.match_by', $me->id);
+                        })
+                        ->get(); 
 
         $list = array();
+        $me = $me->info()->first();
         foreach($userData as $user) {
             $dis = $me->calDistance(floatval($user->info->latitude), floatval($user->info->longitude));
             array_push($list, [ "user" => $user, "distance" => $dis]);
         }
 
         return response()->json($list);
+        return response()->json($userData);
     }
 
     public function getInterests() {
@@ -258,6 +260,19 @@ class UserController extends Controller
         } else {
             abort(400, "Is not matched yet!");
         }
+    }
 
+    public function myMatch(Request $request) {
+        $request->validate([            
+            'email' => ['required', 'email']
+        ]);
+
+        if($request->email == null || $request->email == ""){
+            abort(400, "Email is empty.");
+        }
+
+        $user = User::with(['matchesBy', 'matchesTo'])->find('email', $request->email);
+
+        return response()->json();        
     }
 }
