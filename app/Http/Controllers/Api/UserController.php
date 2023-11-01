@@ -47,7 +47,7 @@ class UserController extends Controller
         if ($exist !== NULL) {
             abort(400, "Email '{$email}' has been used.");
         }
-        
+
         $listOfInterrest = array();
         foreach($request->interests as $name) {
             $interest = Interest::where('name', '=', $name)->first();
@@ -121,6 +121,19 @@ class UserController extends Controller
         return response()->json($user);
     }
 
+    public function getUserInfo($email){
+
+        if($email == null || $email == ""){
+            abort(400, "Email is empty.");
+        }
+
+
+        $me = User::with('info')->where('email', $email)->first();
+        $me = $me->info()->first();
+
+        return response($me);
+    }
+
 
     public function getUserForMatch($email)
     {
@@ -136,13 +149,13 @@ class UserController extends Controller
 
         $me = User::with('info')->where('email', '=', $email)->first();
         $me = $me->info()->first();
-        
-        $userData = User::with('info.interests') 
-                        ->where('email', '!=', $email) 
-                        ->whereDoesntHave('matchesTo') 
-                        ->inRandomOrder() 
+
+        $userData = User::with('info.interests')
+                        ->where('email', '!=', $email)
+                        ->whereDoesntHave('matchesTo')
+                        ->inRandomOrder()
                         ->get();
-        
+
         $list = array();
         foreach($userData as $user) {
             $dis = $me->calDistance(floatval($user->info->latitude), floatval($user->info->longitude));
@@ -183,10 +196,36 @@ class UserController extends Controller
 
     }
 
-    /*
-        add match : $user1->matchesTo()->attach($user2);
-        update match status : $user1->matchesTo()->updateExistingPivot($user2, ['isMatch' => true])
-    */
+    public function editProfile(Request $request){
+
+        $request->validate([
+            'email' => ['required', 'email'],
+            // 'height' => ['integer'],
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if($user == null){
+            abort(400, "user not found");
+        }
+
+
+        $profile = UserInfo::where('user_id', $user->id)->first();
+
+        $profile->smoking = $request->smoking ?? $profile->smoking;
+        $profile->drinking = $request->drinking ?? $profile->drinking;
+        $profile->about_me = $request->about_me ?? $profile->about_me;
+        $profile->height = $request->height ?? $profile->height;
+        $profile->relation = $request->relation ?? $profile->relation;
+        $profile->education = $request->education ?? $profile->education;
+
+        $profile->save();
+
+        return response("change profile success");
+
+    }
+
+
     public function like(Request $request) {
         $request->validate([
             'email' => ['required', 'email'],
@@ -208,7 +247,7 @@ class UserController extends Controller
         if($me->matchesTo->contains('id', $user->id) || $user->matchesBy->contains('id', $me->id)) {
             return response("You have already like or it was a match");
         }
-        
+
         //Am I match by this user?
         if($me->matchesBy->contains('id', $user->id)) {
             $me->matchesBy()->updateExistingPivot($user, ['isMatch' => true]);
