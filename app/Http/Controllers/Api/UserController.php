@@ -151,7 +151,6 @@ class UserController extends Controller
         }
 
         return response()->json($list);
-        return response()->json($userData);
     }
 
     public function getInterests() {
