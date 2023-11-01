@@ -24,11 +24,11 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function matchesTo() {
-        return $this->BelongsToMany(User::class, 'user_user', 'match_by', 'match_to');
+        return $this->BelongsToMany(User::class, 'user_user', 'match_by', 'match_to')->withPivot('isMatch');
     }
 
     public function matchesBy() : BelongsToMany {
-        return $this->BelongsToMany(User::class, 'user_user', 'match_to', 'match_by');
+        return $this->BelongsToMany(User::class, 'user_user', 'match_to', 'match_by')->withPivot('isMatch');
     }
 
     /**

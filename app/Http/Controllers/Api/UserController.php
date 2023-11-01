@@ -136,11 +136,13 @@ class UserController extends Controller
 
         $me = User::with('info')->where('email', '=', $email)->first();
         $me = $me->info()->first();
-        $userData = User::with('info.interests')
-                        ->where('email', '!=', $email)
+        
+        $userData = User::with('info.interests') 
+                        ->where('email', '!=', $email) 
+                        ->whereDoesntHave('matchesTo') 
+                        ->inRandomOrder() 
                         ->get();
-
-        $userData = $userData->shuffle();
+        
         $list = array();
         foreach($userData as $user) {
             $dis = $me->calDistance(floatval($user->info->latitude), floatval($user->info->longitude));
@@ -184,7 +186,36 @@ class UserController extends Controller
     /*
         add match : $user1->matchesTo()->attach($user2);
         update match status : $user1->matchesTo()->updateExistingPivot($user2, ['isMatch' => true])
-        
-
     */
+    public function like(Request $request) {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'likeTo' => ['required', 'integer'], // user_id that the person you like
+        ]);
+
+        if($request->email == null || $request->email == ""){
+            abort(400, "Email is empty.");
+        }
+
+        $me = User::where('email', $request->email)->first();
+        $user = User::with('matchesBy')->where('id', $request->likeTo)->first();
+
+        if ($me == NULL) {
+            abort(400, "Email is invalid");
+        }
+
+        //Did you match this person before?
+        if($me->matchesTo->contains('id', $user->id) || $user->matchesBy->contains('id', $me->id)) {
+            return response("You have already like or it was a match");
+        }
+        
+        //Am I match by this user?
+        if($me->matchesBy->contains('id', $user->id)) {
+            $me->matchesBy()->updateExistingPivot($user, ['isMatch' => true]);
+            return response('It is a match');
+        } else {
+            $me->matchesTo()->attach($user);
+            return response('You have matched');
+        }
+    }
 }
