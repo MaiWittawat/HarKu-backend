@@ -144,6 +144,7 @@ class UserController extends Controller
                         ->whereDoesntHave('matchesTo', function ($query) use ($me) {
                             $query->where('user_user.isMatch', 1);
                         })
+                        ->inRandomOrder()
                         ->get(); 
 
         $list = array();
