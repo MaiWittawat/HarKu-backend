@@ -1,9 +1,9 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\UserInfo;
 
 return new class extends Migration
 {
@@ -14,8 +14,8 @@ return new class extends Migration
     {
         Schema::create('profile_images', function (Blueprint $table) {
             $table->id();
-            $table->string('imgPath');
-            $table->foreignIdFor(UserInfo::class);
+            $table->foreignIdFor(User::class);
+            $table->string('path');
             $table->timestamps();
         });
     }

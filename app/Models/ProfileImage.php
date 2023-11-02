@@ -11,7 +11,7 @@ class ProfileImage extends Model
 {
     use HasFactory;
 
-    public function user_info() {
+    public function images() {
         return $this->belongsTo(UserInfo::class);
     }
 }

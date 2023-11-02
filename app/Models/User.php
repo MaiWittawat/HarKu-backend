@@ -23,6 +23,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(UserInfo::class);
     }
 
+    public function profileImages(){
+        return $this->hasMany(ProfileImage::class);
+    }
+
     public function matchesTo() {
         return $this->BelongsToMany(User::class, 'user_user', 'match_by', 'match_to')->withPivot('isMatch');
     }

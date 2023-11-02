@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserInfo;
 use App\Models\Interest;
-
+use App\Models\ProfileImage;
 
 class UserController extends Controller
 {
@@ -18,6 +18,7 @@ class UserController extends Controller
 
     public function registeration(Request $request)
     {
+        // return response($request->all());
         $request->validate([
             'name' => ['required', 'string'],
             'email' => ['required', 'email'],
@@ -114,11 +115,26 @@ class UserController extends Controller
             'email' => ['required', 'email']
         ]);
 
+        $userData = array();
         $userEmail = $request->email;
 
         $user = User::with('info.interests')->where('email', $userEmail)->first();
 
-        return response()->json($user);
+        $profileImage = $user->profileImages()->first();
+
+        $imageUrl = "";
+
+        if($profileImage == null){
+            $imageUrl = "";
+        }
+        else {
+            $imageUrl = asset('storage/' . $profileImage);
+        }
+
+
+        array_push($userData, [ "user" => $user, "image" => $imageUrl]);
+
+        return response()->json($userData);
     }
 
 
@@ -136,8 +152,8 @@ class UserController extends Controller
 
         $me = User::with('info')->where('email', '=', $email)->first();
 
-        $userData = User::with('info.interests') 
-                        ->where('email', '!=', $email) 
+        $userData = User::with('info.interests')
+                        ->where('email', '!=', $email)
                         ->whereDoesntHave('matchesBy', function ($query) use ($me) {
                             $query->where('user_user.match_by', $me->id);
                         })
@@ -145,13 +161,19 @@ class UserController extends Controller
                             $query->where('user_user.isMatch', 1);
                         })
                         ->inRandomOrder()
-                        ->get(); 
+                        ->get();
 
         $list = array();
         $me = $me->info()->first();
         foreach($userData as $user) {
             $dis = $me->calDistance(floatval($user->info->latitude), floatval($user->info->longitude));
-            array_push($list, [ "user" => $user, "distance" => $dis]);
+            $profileImages = $user->profileImages()->get();
+
+            $imageUrls = $profileImages->map(function ($profileImage) {
+                return asset('storage/' . $profileImage->path);
+            });
+
+            array_push($list, [ "user" => $user, "distance" => $dis, "profileImage" => $imageUrls]);
         }
 
         return response()->json($list);
@@ -250,7 +272,7 @@ class UserController extends Controller
     }
 
     public function isMatch(Request $request) {
-        $request->validate([            
+        $request->validate([
             'sender_id' => ['required', 'integer'],
             'receiver_id' => ['required', 'integer']
         ]);
@@ -266,7 +288,7 @@ class UserController extends Controller
     }
 
     public function myMatch(Request $request) {
-        $request->validate([            
+        $request->validate([
             'email' => ['required', 'email']
         ]);
 
@@ -276,6 +298,6 @@ class UserController extends Controller
 
         $user = User::with(['matchesBy', 'matchesTo'])->find('email', $request->email);
 
-        return response()->json();        
+        return response()->json();
     }
 }
