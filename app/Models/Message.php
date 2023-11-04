@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Message extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = ['sender_id', 'receiver_id', 'body'];
 
     public function sender()
@@ -20,4 +20,9 @@ class Message extends Model
     {
         return $this->belongsTo(User::class, 'receiver_id');
     }
+
+    public function isRead(){
+        return $this->read != null;
+    }
+
 }

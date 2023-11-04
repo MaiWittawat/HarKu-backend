@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserInfo;
 use App\Models\Interest;
+use Carbon\Carbon;
 use App\Models\ProfileImage;
 
 class UserController extends Controller
@@ -31,7 +32,7 @@ class UserController extends Controller
             'distance' => ['required', 'integer'],
             'about_me' => ['required', 'string'],
             'drinking' => ['required', 'string'],
-            'education'=> ['required', 'string'],
+            'education' => ['required', 'string'],
             'height' => ['required', 'integer'],
             'relation' => ['required', 'string'],
             'smoking' => ['required', 'string'],
@@ -50,9 +51,9 @@ class UserController extends Controller
         }
 
         $listOfInterrest = array();
-        foreach($request->interests as $name) {
+        foreach ($request->interests as $name) {
             $interest = Interest::where('name', '=', $name)->first();
-            if($interest == NULL) {
+            if ($interest == NULL) {
                 abort(400, "Interest is invalid");
             }
             array_push($listOfInterrest, $interest);
@@ -88,7 +89,7 @@ class UserController extends Controller
 
         $user->info()->save($userInfo);
 
-        foreach($listOfInterrest as $interest) {
+        foreach ($listOfInterrest as $interest) {
             $userInfo->interests()->save($interest);
         }
 
@@ -108,6 +109,8 @@ class UserController extends Controller
         return response()->json($users);
     }
 
+    
+
     public function getUser(Request $request)
     {
 
@@ -124,15 +127,14 @@ class UserController extends Controller
 
         $imageUrl = "";
 
-        if($profileImage == null){
+        if ($profileImage == null) {
             $imageUrl = "";
-        }
-        else {
-            $imageUrl = asset('storage/' . $profileImage);
+        } else {
+            $imageUrl = asset('storage/' . $profileImage->path);
         }
 
 
-        array_push($userData, [ "user" => $user, "image" => $imageUrl]);
+        array_push($userData, ["user" => $user, "image" => $imageUrl]);
 
         return response()->json($userData);
     }
@@ -140,7 +142,7 @@ class UserController extends Controller
 
     public function getUserForMatch($email)
     {
-        if($email == null || $email == ""){
+        if ($email == null || $email == "") {
             abort(400, "Email is empty.");
         }
 
@@ -153,19 +155,19 @@ class UserController extends Controller
         $me = User::with('info')->where('email', '=', $email)->first();
 
         $userData = User::with('info.interests')
-                        ->where('email', '!=', $email)
-                        ->whereDoesntHave('matchesBy', function ($query) use ($me) {
-                            $query->where('user_user.match_by', $me->id);
-                        })
-                        ->whereDoesntHave('matchesTo', function ($query) use ($me) {
-                            $query->where('user_user.isMatch', 1);
-                        })
-                        ->inRandomOrder()
-                        ->get();
+            ->where('email', '!=', $email)
+            ->whereDoesntHave('matchesBy', function ($query) use ($me) {
+                $query->where('user_user.match_by', $me->id);
+            })
+            ->whereDoesntHave('matchesTo', function ($query) use ($me) {
+                $query->where('user_user.isMatch', 1);
+            })
+            ->inRandomOrder()
+            ->get();
 
         $list = array();
         $me = $me->info()->first();
-        foreach($userData as $user) {
+        foreach ($userData as $user) {
             $dis = $me->calDistance(floatval($user->info->latitude), floatval($user->info->longitude));
             $profileImages = $user->profileImages()->get();
 
@@ -173,24 +175,26 @@ class UserController extends Controller
                 return asset('storage/' . $profileImage->path);
             });
 
-            array_push($list, [ "user" => $user, "distance" => $dis, "profileImage" => $imageUrls]);
+            array_push($list, ["user" => $user, "distance" => $dis, "profileImage" => $imageUrls]);
         }
 
         return response()->json($list);
     }
 
-    public function getInterests() {
+    public function getInterests()
+    {
         return Interest::get();
     }
 
-    public function changePassword(Request $request) {
+    public function changePassword(Request $request)
+    {
         $request->validate([
             'email' => ['required', 'email'],
             'newPassword' => ['required', 'string'],
             'oldPassword' => ['required', 'string']
         ]);
 
-        if($request->email == null || $request->email == ""){
+        if ($request->email == null || $request->email == "") {
             abort(400, "Email is empty.");
         }
 
@@ -200,17 +204,17 @@ class UserController extends Controller
             abort(400, "Email is invalid");
         }
 
-        if(password_verify($request->oldPassword, $user->password)) {
+        if (password_verify($request->oldPassword, $user->password)) {
             $user->password = $request->newPassword;
             $user->save();
             return response("change password successfully");
         } else {
             abort(400, "Password is incorrect");
         }
-
     }
 
-    public function editProfile(Request $request){
+    public function editProfile(Request $request)
+    {
 
         $request->validate([
             'email' => ['required', 'email'],
@@ -219,7 +223,7 @@ class UserController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if($user == null){
+        if ($user == null) {
             abort(400, "user not found");
         }
 
@@ -236,16 +240,16 @@ class UserController extends Controller
         $profile->save();
 
         return response("change profile success");
-
     }
 
-    public function like(Request $request) {
+    public function like(Request $request)
+    {
         $request->validate([
             'email' => ['required', 'email'],
             'likeTo' => ['required', 'integer'], // user_id that the person you like
         ]);
 
-        if($request->email == null || $request->email == ""){
+        if ($request->email == null || $request->email == "") {
             abort(400, "Email is empty.");
         }
 
@@ -257,12 +261,12 @@ class UserController extends Controller
         }
 
         //Did you match this person before?
-        if($me->matchesTo->contains('id', $user->id) || $user->matchesBy->contains('id', $me->id)) {
+        if ($me->matchesTo->contains('id', $user->id) || $user->matchesBy->contains('id', $me->id)) {
             return response("You have already like or it was a match");
         }
 
         //Am I match by this user?
-        if($me->matchesBy->contains('id', $user->id)) {
+        if ($me->matchesBy->contains('id', $user->id)) {
             $me->matchesBy()->updateExistingPivot($user, ['isMatch' => true]);
             return response('It is a match');
         } else {
@@ -271,33 +275,56 @@ class UserController extends Controller
         }
     }
 
-    public function isMatch(Request $request) {
+    public function isMatch(Request $request)
+    {
         $request->validate([
             'sender_id' => ['required', 'integer'],
             'receiver_id' => ['required', 'integer']
         ]);
 
         $user = User::with(['matchesBy', 'matchesTo'])->find($request->sender_id);
-        if($user->matchesTo->contains('id', $request->receiver_id)) {
+        if ($user->matchesTo->contains('id', $request->receiver_id)) {
             return response()->json(['matchesTo' => $request->receiver_id, 'matchesBy' => $request->sender_id]);
-        } elseif($user->matchesBy->contains('id', $request->receiver_id)) {
-            return response()->json(['matchesTo' => $request->sender_id, 'matchesBy' =>$request->receiver_id]);
+        } elseif ($user->matchesBy->contains('id', $request->receiver_id)) {
+            return response()->json(['matchesTo' => $request->sender_id, 'matchesBy' => $request->receiver_id]);
         } else {
             abort(400, "Is not matched yet!");
         }
     }
 
-    public function myMatch(Request $request) {
+    public function myMatch(Request $request)
+    {
         $request->validate([
             'email' => ['required', 'email']
         ]);
 
-        if($request->email == null || $request->email == ""){
+        if ($request->email == null || $request->email == "") {
             abort(400, "Email is empty.");
         }
 
         $user = User::with(['matchesBy', 'matchesTo'])->find('email', $request->email);
 
         return response()->json();
+    }
+
+
+    public function online(Request $request){
+        $request->validate([
+            'email' => ['required','email']
+        ]);
+        $me = User::where('email', $request->email)->first();
+        $me->last_seen = null;
+    }
+
+    public function updateStatus(Request $request){
+        $request->validate([
+            'email' => ['required','email']
+        ]);
+        $me = User::where('email', $request->email)->first();
+        $me->last_seen = now();
+
+        $me->save();
+
+        return "Logout success";
     }
 }

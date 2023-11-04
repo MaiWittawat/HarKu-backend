@@ -53,10 +53,32 @@ class ProfileImageController extends Controller
             });
 
             if ($imageUrls->isNotEmpty()) {
-                return response()->json(['image_urls' => $imageUrls], 200);
+                return $imageUrls;
             }
 
             return response()->json(['error' => 'No images found'], 404);
+        }
+        return response()->json(['error' => 'User not found'], 400);
+    }
+
+
+    public function getImage($email){
+
+        if($email == "" || $email == null){
+            abort(400, "Email is empty.");
+        }
+
+        $me = User::where('email', $email)->first();
+
+        if($me != null){
+
+            $image = ProfileImage::where('user_id', $me->id)
+            ->orderBy('id', 'asc')
+            ->first();
+
+            $imageUrl = $image ? asset('storage/' . $image->path) : null;
+
+            return response()->json($imageUrl);
         }
         return response()->json(['error' => 'User not found'], 400);
     }

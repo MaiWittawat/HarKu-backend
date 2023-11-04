@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -30,6 +31,14 @@ class AuthController extends Controller
             'password' => ['required']
         ]);
         $credentials = request(['email', 'password']);
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && password_verify($request->password, $user->password)) {
+
+            $user->last_seen = null;
+            $user->save();
+        }
 
         if (! $token = JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);

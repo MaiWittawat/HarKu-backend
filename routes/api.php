@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\MatchController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\ProfileImageController;
 use Illuminate\Http\Request;
@@ -35,13 +36,24 @@ Route::post('isMatch', [UserController::class, 'isMatch']);
 Route::post('/myMatch', [UserController::class, 'myMatch']);
 Route::post('/myLike', [UserController::class, 'myLike']);
 Route::post('/likeMe', [UserController::class, 'likeMe']);
+Route::post('/updateStatus', [UserController::class, 'updateStatus']);
 
 Route::post('/message', [MessageController::class, 'storeMessage']);
 Route::post('/chat', [MessageController::class, 'getMessage']);
 Route::get('/lastMessageIndex', [MessageController::class, 'lastMessageIndex']);
 
+Route::get('/getChatList/{email}', [MessageController::class, 'getChatList']);
+
 Route::post('/upload-image', [ProfileImageController::class, 'uploadFile']);
 Route::get('/getProfileImages/{email}', [ProfileImageController::class, 'getProfileImages']);
+Route::get('/getImage/{email}',[ProfileImageController::class, 'getImage']);
+
+
+
+// Match Controller
+Route::get('/getMatch/{email}', [MatchController::class, 'getMatch']);
+Route::get('/getMatchesBy/{email}', [MatchController::class, 'getMatchesBy']);
+Route::get('/getMatchesTo/{email}', [MatchController::class, 'getMatchesTo']);
 
 Route::group([
 
