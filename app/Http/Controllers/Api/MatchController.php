@@ -44,7 +44,7 @@ class MatchController extends Controller
     public function getMatchesBy($email){
 
         $me = User::where('email', $email)->first();
-        $users = $me->matchesBy()->get();
+        $users = $me->matchesBy()->where('isMatch', '!=', 1)->get();
 
         $result = [];
 
@@ -69,7 +69,7 @@ class MatchController extends Controller
     public function getMatchesTo($email){
 
         $me = User::where('email', $email)->first();
-        $users = $me->matchesTo()->get();
+        $users = $me->matchesTo()->where('isMatch', '!=', 1)->get();
 
         $result = [];
 

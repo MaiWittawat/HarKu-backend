@@ -109,11 +109,10 @@ class UserController extends Controller
         return response()->json($users);
     }
 
-    
+
 
     public function getUser(Request $request)
     {
-
         $request->validate([
             'email' => ['required', 'email']
         ]);
@@ -127,6 +126,9 @@ class UserController extends Controller
 
         $imageUrl = "";
 
+        $me = UserInfo::where('user_id', $user->id)->first();
+        $age = $me->getAge();
+
         if ($profileImage == null) {
             $imageUrl = "";
         } else {
@@ -134,7 +136,7 @@ class UserController extends Controller
         }
 
 
-        array_push($userData, ["user" => $user, "image" => $imageUrl]);
+        array_push($userData, ["user" => $user, "image" => $imageUrl, "age" => $age]);
 
         return response()->json($userData);
     }
@@ -142,17 +144,21 @@ class UserController extends Controller
 
     public function getUserForMatch($email)
     {
+
         if ($email == null || $email == "") {
             abort(400, "Email is empty.");
         }
 
         $existEmail = User::where('email', $email)->first();
 
+
         if ($existEmail == NULL) {
             abort(400, "Email is invalid");
         }
 
-        $me = User::with('info')->where('email', '=', $email)->first();
+        $me = User::with('info')->where('email', $email)->first();
+
+        $age = $me->info->getAge();
 
         $userData = User::with('info.interests')
             ->where('email', '!=', $email)
@@ -175,7 +181,7 @@ class UserController extends Controller
                 return asset('storage/' . $profileImage->path);
             });
 
-            array_push($list, ["user" => $user, "distance" => $dis, "profileImage" => $imageUrls]);
+            array_push($list, ["user" => $user, "distance" => $dis, "profileImage" => $imageUrls, "age"=> $age]);
         }
 
         return response()->json($list);
@@ -208,17 +214,18 @@ class UserController extends Controller
             $user->password = $request->newPassword;
             $user->save();
             return response("change password successfully");
-        } else {
-            abort(400, "Password is incorrect");
         }
+
+        abort(400, ['error'=>"Password is incorrect"]);
     }
 
     public function editProfile(Request $request)
     {
 
+        // return $request->all();
+
         $request->validate([
             'email' => ['required', 'email'],
-            // 'height' => ['integer'],
         ]);
 
         $user = User::where('email', $request->email)->first();
@@ -226,6 +233,28 @@ class UserController extends Controller
         if ($user == null) {
             abort(400, "user not found");
         }
+
+        $profileImages = $user->profileImages()->get();
+
+        if($request->hasFile('images')){
+            foreach ($profileImages as $img) {
+                $img->delete();
+            }
+
+            foreach ($request->images as $profileImg) {
+                $image = new ProfileImage();
+                $image->user_id = $user->id;
+                $image->path = $profileImg;
+                $image->save();
+            }
+        }
+
+
+        // foreach($request->interests as $interest){
+        //     $userInterest = new Interest();
+        //     $userInterest->userinfo_id
+        // }
+
 
 
         $profile = UserInfo::where('user_id', $user->id)->first();

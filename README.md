@@ -1,66 +1,71 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# วิทวัส พิณรัตน์ 6410451393
+# หทัยทิพย์ แก้วคำ 6410451521
+# ชวิศ สิทธิธรรมจักษ์ 6410450842
+# พุฒิพงศ์ ศรีนา 6410450206
+# หทัยชนก กลัดงาม 6410451512
+# พุธิตา ไพบูลย์ธนสมบัติ 6410451245
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+เป็นโปรเจคเกี่ยวกับแอพพลิเคชั่นหาคู่ที่จะแสดงข้อมูลโดยย่อ เช่น ชื่อ ความชอบ รูปภาพ ของผู้ใช้ เพื่อให้ผู้ใช้สามารถหาคู่โดยวิธีการรปัดไปทางขวาคือชอบ ทางซ้ายคือไม่ชอบ ถ้าทั้งสองฝ่ายชอบเหมือนกันก็จะสามารถแชทหากันได้
 
-## About Laravel
+# วิธีการใช้งาน 
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+* 1. ล็อกอินหรือสร้างบัญชี
+   1.1 หากคุณเป็นผู้ใช้ใหม่, คุณสามารถล็อกอินผ่าน Email และ กรอกรหัสผ่านให้ถูฏต้องตามที่ตั้งไว้ 
+  1.2 หากคุณยังไม่มีบัญชี, คุณสามารถสร้างบัญชีใหม่โดยกรอกข้อมูลขั้นตอนแรก
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* 2. Profile Setup
+   2.1 คุณจะต้องบันทึกโปรไฟล์โดยให้ข้อมูลเกี่ยวกับตัวเอง เช่น รูปภาพ, คำอธิบาย, และข้อมูลส่วนตัว.
+   2.2 คุณสามารถเพิ่มรูปภาพหลายรูปภาพและเขียนคำอธิบายที่น่าสนใจ.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* 3. Search for Matches:
+   3.1 หลังจากบันทึกโปรไฟล์, คุณสามารถค้นหาคู่ครองโดยใช้เกณฑ์ต่าง ๆ เช่น เพศ, ระยะทาง, และอายุ.
+   3.2 คุณสามารถ swipe right เพื่อแสดงความสนใจในโปรไฟล์ของคนอื่น หรือ swipe left เพื่อไม่แสดงความสนใจ
 
-## Learning Laravel
+* 4. Matching
+   4.1 หากคุณแสดงความสนใจในโปรไฟล์ของคนอื่น และคนนั้นก็แสดงความสนใจกลับในโปรไฟล์ของคุณ, การ match จะเกิดขึ้น.
+   4.2 คุณสามารถเริ่มสนทนากับคู่ครองของคุณที่ทำการ match
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+* 5. การสนทนา Messaging
+   5.1 หลังจาก match, คุณสามารถสนทนากับคู่ครองของคุณผ่านระบบข้อความใน QuickDate
+   5.2 คุณสามารถส่งข้อความข้อความในการสนทนา
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+* 6. ความสัมพันธ์ 
+   6.1 คุณสามารถทำความรู้จักคู่ครองของคุณและสร้างความสัมพันธ์ผ่านการสนทนาและการพบปะ.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## Laravel Sponsors
+# วิธีการติดตั้ง
+* ใช้ได้กับคนที่มี docker ในเครื่องเท่านั้น !!
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
 
-### Premium Partners
+* 1. clone code ทั้งหน้าบ้านเเละหลังบ้านจาก github
+    1.1 https://github.com/MaiWittawat/HarKu-frontend.git (NuxtJs)
+    1.2 https://github.com/MaiWittawat/HarKu-backend.git (Laravel)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+* 2. หลังจาก clone เเล้วให้รันคำสั่ง
+    2.1 cd เข้าไปที่ directory  ที่ติดตั้งโปรเจ็ค (NuxtJs)
+    2.2 npm install (NuxtJs)
+    2.3 กำหนดค่า Configuration ใน nuxt.config.js (NuxtJs)
+    2.4 ทดสอบการรันด้วย npm run dev (NuxtJs) 
 
-## Contributing
+    2.5 cd เข้าไปที่ directory ที่ติดตั้งโปรเจ็ค(Laravel)
+    2.6 รันคำสั่ง  (Laravel)
+        docker run --rm \
+        -u "$(id -u):$(id -g)" \
+        -v "$(pwd):/var/www/html" \
+        -w /var/www/html \
+        laravelsail/php82-composer:latest \
+        composer install --ignore-platform-reqs
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    2.7 cp .env.example .env  (Laravel)
+    2.8 กำหนดค่าใน .env (Laravel)
+    2.9 รันคำสั่ง sail up -d (Laravel)
+    2.10 รันคำสั่ง sail yarn install (Laravel)
+    2.11 รันคำสั่ง sail yarn dev (Laravel)
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Jira 
+ * https://akarapon.atlassian.net/jira/software/projects/QUIC/boards/4/timeline?shared=&atlOrigin=eyJpIjoiMTE1Mjc5MDYxMGNmNDAwZWI0NjBiMGVjMWM4MTc1MzMiLCJwIjoiaiJ9
 
-## Security Vulnerabilities
+# PDF
+ * https://me-qr.com/th/mobile/pdf/18580382
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
