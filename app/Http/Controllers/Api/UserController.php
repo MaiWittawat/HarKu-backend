@@ -102,6 +102,7 @@ class UserController extends Controller
         $request->validate([
             'userId' => ['required']
         ]);
+
         $userIdToExclude = $request->userId;
 
         $users = User::where('id', '!=', $userIdToExclude)->get();

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MatchController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\ProfileImageController;
+use App\Http\Controllers\Api\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,7 +26,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/test', [UserController::class, 'test']);
 Route::post('/register', [UserController::class, 'registeration']);
+
 Route::post('/getAllUser', [UserController::class, 'getAllUser']);
+
 Route::post('/getUser', [UserController::class, 'getUser']);
 Route::get('/getUserForMatch/{email}', [UserController::class, 'getUserForMatch']);
 Route::get('/getInterests', [UserController::class, 'getInterests']);
@@ -48,6 +51,9 @@ Route::post('/upload-image', [ProfileImageController::class, 'uploadFile']);
 Route::get('/getProfileImages/{email}', [ProfileImageController::class, 'getProfileImages']);
 Route::get('/getImage/{email}',[ProfileImageController::class, 'getImage']);
 
+
+Route::post('/addReport', [ReportController::class, 'addReport']);
+Route::get('/getAllReport', [ReportController::class, 'getAllReport']);
 
 
 // Match Controller
