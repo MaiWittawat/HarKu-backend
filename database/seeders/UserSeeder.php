@@ -29,5 +29,11 @@ class UserSeeder extends Seeder
             'name' => 'Boost',
             'email' => 'boost@example.com',
         ]);
+
+        User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'role' => 'ADMIN'
+        ]);
     }
 }

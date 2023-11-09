@@ -143,6 +143,40 @@ class UserController extends Controller
     }
 
 
+    public function getUserById($id)
+    {
+
+        $user = User::with('info.interests')->where('id', $id)->first();
+
+        $userData = array();
+
+        $profileImage = $user->profileImages()->first();
+
+        $imageUrl = "";
+
+        $me = UserInfo::where('user_id', $user->id)->first();
+        $age = $me->getAge();
+
+        if ($profileImage == null) {
+            $imageUrl = "";
+        } else {
+            $imageUrl = asset('storage/' . $profileImage->path);
+        }
+
+
+        array_push($userData, ["user" => $user, "image" => $imageUrl, "age" => $age]);
+
+        return response()->json($userData);
+    }
+
+
+    public function getBanUser(){
+        $data = User::where('status', 1)->get();
+
+        return $data;
+    }
+
+
     public function getUserForMatch($email)
     {
 
@@ -163,6 +197,7 @@ class UserController extends Controller
 
         $userData = User::with('info.interests')
             ->where('email', '!=', $email)
+            ->where('role', 'user')
             ->whereDoesntHave('matchesBy', function ($query) use ($me) {
                 $query->where('user_user.match_by', $me->id);
             })
@@ -174,7 +209,9 @@ class UserController extends Controller
 
         $list = array();
         $me = $me->info()->first();
+
         foreach ($userData as $user) {
+
             $dis = $me->calDistance(floatval($user->info->latitude), floatval($user->info->longitude));
             $profileImages = $user->profileImages()->get();
 
@@ -223,7 +260,6 @@ class UserController extends Controller
     public function editProfile(Request $request)
     {
 
-        // return $request->all();
 
         $request->validate([
             'email' => ['required', 'email'],
@@ -251,13 +287,6 @@ class UserController extends Controller
         }
 
 
-        // foreach($request->interests as $interest){
-        //     $userInterest = new Interest();
-        //     $userInterest->userinfo_id
-        // }
-
-
-
         $profile = UserInfo::where('user_id', $user->id)->first();
 
         $profile->smoking = $request->smoking ?? $profile->smoking;
@@ -266,6 +295,21 @@ class UserController extends Controller
         $profile->height = $request->height ?? $profile->height;
         $profile->relation = $request->relation ?? $profile->relation;
         $profile->education = $request->education ?? $profile->education;
+        $profile->prefer_max_age = $request->prefer_max_age ?? $profile->prefer_max_age;
+        $profile->prefer_min_age = $request->prefer_min_age ?? $profile->prefer_min_age;
+
+        // $profile->interests()->detach();
+
+
+        // foreach ($request->interests as $interestName) {
+
+        //     $interest = new Interest();
+
+
+        //     $interest->save();
+
+        //     $profile->interests()->attach($interest->id);
+        // }
 
         $profile->save();
 
@@ -357,4 +401,6 @@ class UserController extends Controller
 
         return "Logout success";
     }
+
+
 }

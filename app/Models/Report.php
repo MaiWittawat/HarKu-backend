@@ -9,8 +9,18 @@ class Report extends Model
 {
     use HasFactory;
 
-    public function user(){
-        return $this->belongsToMany(User::class);
+    // public function user(){
+    //     return $this->belongsToMany(User::class);
+    // }
+
+    public function reportToUsers()
+    {
+        return $this->belongsToMany(User::class, 'reports', 'report_to');
+    }
+
+    public function reportByUsers()
+    {
+        return $this->belongsToMany(User::class, 'reports', 'report_by');
     }
 
 }

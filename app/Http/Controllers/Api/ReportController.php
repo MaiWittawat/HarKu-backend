@@ -9,7 +9,8 @@ use App\Models\User;
 
 class ReportController extends Controller
 {
-    public function addReport(Request $request){
+    public function addReport(Request $request)
+    {
 
         // return $request->all();
 
@@ -32,30 +33,62 @@ class ReportController extends Controller
     }
 
 
-    public function getAllReport(){
-        $data = User::select('users.*')->join('reports', 'users.id', '=', 'reports.report_to')->selectRaw('COUNT(reports.id) as report_count')->groupBy('users.id')->get();
-
-        // $data = Report::select('report_to')->groupBy('report_to')->selectRaw('count(*) as count')->get();
+    public function getAllReport()
+    {
+        $data = User::select('users.*')
+            ->join('reports', 'users.id', '=', 'reports.report_to')
+            ->selectRaw('COUNT(reports.id) as report_count')
+            ->where('users.status', '!=', 1)
+            ->groupBy('users.id')
+            ->get();
 
         return $data;
     }
 
-    public function ban(Request $request){
-        $user = User::where('email', $request->email);
-        $user->status = "BAN";
+
+
+
+    public function ban($id)
+    {
+        // return $id;
+        $user = User::find($id);
+        $user->status = 1;
         $user->save();
 
         return "Ban user success";
     }
 
-    public function unban(Request $request){
-        $user = User::where('email', $request->email);
+    public function unban($id)
+    {
+        $user = User::find($id);
         $user->status = null;
         $user->save();
 
-        $reports = Report::where('report_to', $user->id)->get();
-        $reports->delete();
+        $reports = Report::where('report_to', $user->id)->delete();
 
         return "Unban user success";
     }
+
+
+    public function getReportDetail($id)
+    {
+
+        $reports = Report::where('report_to', $id)->get();
+
+        $reportDetails = [];
+
+        foreach ($reports as $report) {
+            $reporter = User::find($report->report_by);
+
+            $reportDetails[] = [
+                'reporter' => $reporter,
+                'body' => $report->body,
+            ];
+        }
+
+        return $reportDetails;
+    }
+
+
+
 }

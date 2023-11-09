@@ -28,6 +28,7 @@ Route::get('/test', [UserController::class, 'test']);
 Route::post('/register', [UserController::class, 'registeration']);
 
 Route::post('/getAllUser', [UserController::class, 'getAllUser']);
+Route::get('/getBanUser', [UserController::class, 'getBanUser']);
 
 Route::post('/getUser', [UserController::class, 'getUser']);
 Route::get('/getUserForMatch/{email}', [UserController::class, 'getUserForMatch']);
@@ -48,12 +49,17 @@ Route::get('/lastMessageIndex', [MessageController::class, 'lastMessageIndex']);
 Route::get('/getChatList/{email}', [MessageController::class, 'getChatList']);
 
 Route::post('/upload-image', [ProfileImageController::class, 'uploadFile']);
+Route::post('/editFile', [ProfileImageController::class, 'editFile']);
 Route::get('/getProfileImages/{email}', [ProfileImageController::class, 'getProfileImages']);
 Route::get('/getImage/{email}',[ProfileImageController::class, 'getImage']);
 
 
 Route::post('/addReport', [ReportController::class, 'addReport']);
+Route::get('/getReportDetail/{userId}', [ReportController::class, 'getReportDetail']);
 Route::get('/getAllReport', [ReportController::class, 'getAllReport']);
+Route::get('/ban/{id}', [ReportController::class, 'ban']);
+Route::get('/unban/{id}', [ReportController::class, 'unban']);
+Route::get('/getUserById/{id}', [UserController::class, 'getUserById']);
 
 
 // Match Controller
