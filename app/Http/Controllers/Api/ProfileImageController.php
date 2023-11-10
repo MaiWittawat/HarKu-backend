@@ -11,7 +11,6 @@ class ProfileImageController extends Controller
 {
     public function uploadFile(Request $request)
     {
-        // return $request->all();
         $me = User::where('email', $request->email)->first();
 
         if ($me != null) {
@@ -48,7 +47,6 @@ class ProfileImageController extends Controller
         if ($me != null) {
 
             if ($request->hasFile('image')) {
-                // return  response()->json($me);
                 ProfileImage::where('user_id', $me->id)->delete();
 
                 $uploadedImageUrls = [];
