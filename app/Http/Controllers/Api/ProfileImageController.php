@@ -11,11 +11,12 @@ class ProfileImageController extends Controller
 {
     public function uploadFile(Request $request)
     {
-        return $request->all();
+        // return $request->all();
         $me = User::where('email', $request->email)->first();
 
         if ($me != null) {
             if ($request->hasFile('image')) {
+
                 $uploadedImageUrls = [];
 
                 foreach ($request->file('image') as $image) {
@@ -40,11 +41,14 @@ class ProfileImageController extends Controller
 
     public function editFile(Request $request)
     {
+
+
         $me = User::where('email', $request->email)->first();
 
         if ($me != null) {
+
             if ($request->hasFile('image')) {
-                // ลบรูปภาพเก่า
+                // return  response()->json($me);
                 ProfileImage::where('user_id', $me->id)->delete();
 
                 $uploadedImageUrls = [];

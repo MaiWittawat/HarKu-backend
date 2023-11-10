@@ -59,9 +59,6 @@ class UserController extends Controller
             array_push($listOfInterrest, $interest);
         }
 
-        if ($request->hasFile('image')) {
-            return "hasfile";
-        }
 
         $user = new User();
         $user->name = $request->name;
@@ -109,7 +106,6 @@ class UserController extends Controller
 
         return response()->json($users);
     }
-
 
 
     public function getUser(Request $request)
@@ -170,7 +166,8 @@ class UserController extends Controller
     }
 
 
-    public function getBanUser(){
+    public function getBanUser()
+    {
         $data = User::where('status', 1)->get();
 
         return $data;
@@ -195,8 +192,8 @@ class UserController extends Controller
 
         $age = $me->info->getAge();
 
-        $userData = User::with('info.interests')
-            ->where('email', '!=', $email)
+
+        $usersData = User::with('info')->where('email', '!=', $email)
             ->where('role', 'user')
             ->whereDoesntHave('matchesBy', function ($query) use ($me) {
                 $query->where('user_user.match_by', $me->id);
@@ -204,25 +201,69 @@ class UserController extends Controller
             ->whereDoesntHave('matchesTo', function ($query) use ($me) {
                 $query->where('user_user.isMatch', 1);
             })
+            ->whereHas('info', function ($query) use ($me) {
+                $query->where('gender', $me->info->show_gender)
+                    // ->where('smoking', $me->info->smoking)
+                    // ->where('drinking', $me->info->drinking)
+                    ->where('relation', $me->info->relation);
+            })
             ->inRandomOrder()
             ->get();
 
         $list = array();
         $me = $me->info()->first();
-
-        foreach ($userData as $user) {
-
-            $dis = $me->calDistance(floatval($user->info->latitude), floatval($user->info->longitude));
+        foreach ($usersData as $user) {
+            $info = $user->info()->first();
+            $dis = $me->calDistance(floatval($info->latitude), floatval($info->longitude));
+            $birthday = $info->birthday;
             $profileImages = $user->profileImages()->get();
 
             $imageUrls = $profileImages->map(function ($profileImage) {
                 return asset('storage/' . $profileImage->path);
             });
+            $age = date_diff(date_create($birthday), date_create('today'))->y;
 
-            array_push($list, ["user" => $user, "distance" => $dis, "profileImage" => $imageUrls, "age"=> $age]);
+            array_push($list, ["user" => $user, "distance" => $dis, "profileImage" => $imageUrls, "age" => $age]);
         }
 
         return response()->json($list);
+
+        // $userData = User::with('info.interests')
+        //     ->where('email', '!=', $email)
+        //     ->where('role', 'user')
+        //     ->whereDoesntHave('matchesBy', function ($query) use ($me) {
+        //         $query->where('user_user.match_by', $me->id);
+        //     })
+        //     ->whereDoesntHave('matchesTo', function ($query) use ($me) {
+        //         $query->where('user_user.isMatch', 1);
+        //     })
+        //     ->whereHas('info', function ($query) use ($me) {
+        //         $query->where('gender', $me->info->show_gender);
+        //         $query->where('smoking', $me->info->smoking);
+        //         $query->where('drinking', $me->info->drinking);
+        //         $query->where('relation', $me->info->relation);
+        //     })
+        //     ->inRandomOrder()
+        //     ->get();
+
+
+
+        // $list = array();
+        // $me = $me->info()->first();
+
+        // foreach ($userData as $user) {
+
+        //     $dis = $me->calDistance(floatval($user->info->latitude), floatval($user->info->longitude));
+        //     $profileImages = $user->profileImages()->get();
+
+        //     $imageUrls = $profileImages->map(function ($profileImage) {
+        //         return asset('storage/' . $profileImage->path);
+        //     });
+
+        //     array_push($list, ["user" => $user, "distance" => $dis, "profileImage" => $imageUrls, "age" => $age]);
+        // }
+
+        // return response()->json($list);
     }
 
     public function getInterests()
@@ -254,12 +295,11 @@ class UserController extends Controller
             return response("change password successfully");
         }
 
-        abort(400, ['error'=>"Password is incorrect"]);
+        abort(400, ['error' => "Password is incorrect"]);
     }
 
     public function editProfile(Request $request)
     {
-
 
         $request->validate([
             'email' => ['required', 'email'],
@@ -267,13 +307,15 @@ class UserController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
+
+
         if ($user == null) {
             abort(400, "user not found");
         }
 
         $profileImages = $user->profileImages()->get();
 
-        if($request->hasFile('images')){
+        if ($request->hasFile('images')) {
             foreach ($profileImages as $img) {
                 $img->delete();
             }
@@ -286,8 +328,7 @@ class UserController extends Controller
             }
         }
 
-
-        $profile = UserInfo::where('user_id', $user->id)->first();
+        $profile = UserInfo::with('interests')->where('user_id', $user->id)->first();
 
         $profile->smoking = $request->smoking ?? $profile->smoking;
         $profile->drinking = $request->drinking ?? $profile->drinking;
@@ -298,18 +339,21 @@ class UserController extends Controller
         $profile->prefer_max_age = $request->prefer_max_age ?? $profile->prefer_max_age;
         $profile->prefer_min_age = $request->prefer_min_age ?? $profile->prefer_min_age;
 
-        // $profile->interests()->detach();
 
+        $info = UserInfo::where('user_id', $user->id)->first();
 
-        // foreach ($request->interests as $interestName) {
+        if ($profile->interests != null) {
+            foreach ($profile->interests as $interest) {
+                $interest->delete();
+            }
+        }
 
-        //     $interest = new Interest();
+        foreach ($request->interests as $interest) {
+            $interest = Interest::where('name', $interest)->first();
 
+            $info->interests()->save($interest);
+        }
 
-        //     $interest->save();
-
-        //     $profile->interests()->attach($interest->id);
-        // }
 
         $profile->save();
 
@@ -382,17 +426,19 @@ class UserController extends Controller
     }
 
 
-    public function online(Request $request){
+    public function online(Request $request)
+    {
         $request->validate([
-            'email' => ['required','email']
+            'email' => ['required', 'email']
         ]);
         $me = User::where('email', $request->email)->first();
         $me->last_seen = null;
     }
 
-    public function updateStatus(Request $request){
+    public function updateStatus(Request $request)
+    {
         $request->validate([
-            'email' => ['required','email']
+            'email' => ['required', 'email']
         ]);
         $me = User::where('email', $request->email)->first();
         $me->last_seen = now();
@@ -401,6 +447,4 @@ class UserController extends Controller
 
         return "Logout success";
     }
-
-
 }
