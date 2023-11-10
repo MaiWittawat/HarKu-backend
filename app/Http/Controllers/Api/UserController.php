@@ -9,6 +9,7 @@ use App\Models\UserInfo;
 use App\Models\Interest;
 use Carbon\Carbon;
 use App\Models\ProfileImage;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -202,10 +203,12 @@ class UserController extends Controller
                 $query->where('user_user.isMatch', 1);
             })
             ->whereHas('info', function ($query) use ($me) {
-                $query->where('gender', $me->info->show_gender)
-                    // ->where('smoking', $me->info->smoking)
-                    // ->where('drinking', $me->info->drinking)
-                    ->where('relation', $me->info->relation);
+                $query->where(function ($subquery) use ($me) {
+                    if ($me->info->show_gender !== 'all') {
+                        $subquery->where('gender', $me->info->show_gender);
+                    }
+                })->where('relation', $me->info->relation)
+                ->whereRaw("TIMESTAMPDIFF(YEAR, birthday, CURDATE()) BETWEEN ? AND ?", [$me->info->prefer_min_age, $me->info->prefer_max_age]);
             })
             ->inRandomOrder()
             ->get();
